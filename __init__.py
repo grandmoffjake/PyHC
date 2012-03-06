@@ -60,6 +60,8 @@ class PyHC(Ui_MainWindow):
             self.board.clearMyActive()
             self.board.boardFigures[x][y].active = 1
             print self.board.boardFigures[x][y].name
+            print self.board.boardFigures[x][y].getClick()
+            print self.board.boardFigures[x][y].describePower("spd", "SPC")
             self.board.updateGL()
         
     def moveMap(self, event):

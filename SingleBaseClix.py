@@ -15,6 +15,7 @@ class SingleBaseClix(Clix):
         self.board = parent
         self.name = "Figure"
         self.mine = True
+        Clix.__init__(self, parent)
     
     def draw(self):
         glPushMatrix()

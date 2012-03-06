@@ -1,8 +1,9 @@
 '''
-Created on Jul 7, 2009
+GameBoard - got my starting point from Stou Sandalski's SpiralWidget demo:
+http://www.siafoo.net/snippet/316
 
-@author: Stou Sandalski (stou@icapsid.net)
-@license:  Public Domain
+Got the board starting point from Ian Mallett's Pente implementation
+http://www.geometrian.com/Programs.php
 '''
 
 import math
@@ -16,11 +17,9 @@ from OpenGL.GLU import *
 
 from PyQt4 import QtGui
 from PyQt4.QtOpenGL import *
+from PAC import *
 
 class GameBoard(QGLWidget):
-    '''
-    Widget for drawing two spirals.
-    '''
     
     def __init__(self, parent):
         QGLWidget.__init__(self, parent)
@@ -30,6 +29,7 @@ class GameBoard(QGLWidget):
         self.x_pos = 0.0
         self.y_pos = 0.0
         self.z_pos = 0.0
+        self.PAC = PAC()
         
         self.moving = False
         self.moveOriginX = 0
