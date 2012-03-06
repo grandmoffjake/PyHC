@@ -13,6 +13,8 @@ class PyHC(Ui_MainWindow):
     def __init__(self, ui, MainWindow):
         self.mousePosition = [0, 0]
         self.MainWindow = MainWindow
+        self.ui = ui
+        ui.glFrame.setTitle( " " )
         self.board = GameBoard(MainWindow)
         ui.vLayout.addWidget(self.board)
         MainWindow.keyPressEvent = self.test
@@ -21,7 +23,6 @@ class PyHC(Ui_MainWindow):
         self.board.mouseDoubleClickEvent = self.doubleClickMap
         self.board.mousePressEvent = self.clickMap
         self.board.mouseReleaseEvent = self.stopMoving
-        
         self.lastX = False
         self.lastY = False
         
@@ -56,12 +57,25 @@ class PyHC(Ui_MainWindow):
         
     def doubleClickMap(self, event):
         x, y = self.getBoardXY(event)
-        if ( self.board.boardFigures[x][y]):
+        f = self.board.boardFigures[x][y]
+        if ( f ):
             self.board.clearMyActive()
-            self.board.boardFigures[x][y].active = 1
-            print self.board.boardFigures[x][y].name
-            print self.board.boardFigures[x][y].getClick()
-            print self.board.boardFigures[x][y].describePower("spd", "SPC")
+            if f.mine:
+                f.active = 1
+            else:
+                f.active = 2
+                
+            print f.name
+            #print f.drawDial()
+            print f.getClick()
+            print f.describePower("spd", "SPC")
+            #qimg = QtGui.QImage.fromData(f.drawDial())
+            pixmap = QtGui.QPixmap()
+            pixmap.loadFromData(f.drawDial(), "PNG")
+            #ui.myDial.setText( f.getName() )
+            ui.myDial.setPixmap( pixmap )
+            ui.myDial.update()
+            #ui.dialsLayout.addWidget(qimg)
             self.board.updateGL()
         
     def moveMap(self, event):
@@ -71,11 +85,18 @@ class PyHC(Ui_MainWindow):
             self.board.moveDestinationY = y
             self.lastX = x
             self.lastY = y
+            f = self.board.boardFigures[self.board.moveOriginX][self.board.moveOriginY]
+            delta = abs( x - self.board.moveOriginX )
+            dY = abs( y - self.board.moveOriginY )
+            if dY > delta:
+                delta = dY
+            self.ui.glFrame.setTitle( "Moving "+f.getName()+" "+str(delta)+" space(s)..." )
             #print self.board.moveDestinationX,  self.board.moveDestinationY
             self.board.updateGL()
         
     def stopMoving(self, event):
         if self.board.moving:
+            self.ui.glFrame.setTitle( " " )
             self.board.moving = False
             self.board.moveSelectedFigure()
             self.board.updateGL()

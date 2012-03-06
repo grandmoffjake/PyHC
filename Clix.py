@@ -1,4 +1,7 @@
 import xml.etree.ElementTree as ET
+import Image
+import ImageDraw
+import StringIO
 
 class Clix:
     def __init__(self, parent):
@@ -104,3 +107,16 @@ class Clix:
             c = self.dial.getchildren()
             click = c[self.currentClick-1].getchildren()
             return ((click[0].text,  click[0].get("power")), (click[1].text, click[1].get("power")), (click[2].text, click[2].get("power")), (click[3].text, click[3].get("power")))
+            
+    def drawDial(self):
+        im = Image.new('RGBA', (150, 150),  (0, 0, 0, 0))
+        draw = ImageDraw.Draw(im)
+        draw.rectangle( (10, 10, 90, 90 ),  fill="yellow",  outline="red" )
+        
+        #This solution is ignorant, but for some reason Image.tostring can't get PNG data or any format easily understood by QPixmap
+        output = StringIO.StringIO()
+        im.save(output, "PNG")
+        contents = output.getvalue()
+        output.close()
+        
+        return contents
