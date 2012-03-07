@@ -21,7 +21,7 @@ from PAC import *
 
 class GameBoard(QGLWidget):
     
-    def __init__(self, parent):
+    def __init__(self, parent, ui):
         QGLWidget.__init__(self, parent)
         self.view_angle_x = 90
         self.view_angle_y = 0
@@ -30,6 +30,8 @@ class GameBoard(QGLWidget):
         self.y_pos = 0.0
         self.z_pos = 0.0
         self.PAC = PAC()
+        self.main = parent
+        self.ui = ui
         
         self.moving = False
         self.moveOriginX = 0
@@ -44,13 +46,12 @@ class GameBoard(QGLWidget):
         s = SingleBaseClix(self)
         s.x = 2
         s.y = 2
-        s.name = "Batman"
         
         b = SingleBaseClix(self)
         b.x = 23
         b.y = 2
-        b.active = 2
-        b.name = "Wolverine"
+        b.tokenColor = "blue"
+        b.mine = False
         
         self.boardFigures[b.x][b.y] = b
         self.boardFigures[s.x][s.y] = s
@@ -236,11 +237,22 @@ class GameBoard(QGLWidget):
                     
     def moveSelectedFigure(self):
         if self.moveOriginX != self.moveDestinationX or self.moveOriginY != self.moveDestinationY:
-            if self.boardFigures[self.moveOriginX][self.moveOriginY] and self.boardFigures[self.moveOriginX][self.moveOriginY].mine and self.boardFigures[self.moveDestinationX][self.moveDestinationY] == False:
-                self.boardFigures[self.moveOriginX][self.moveOriginY].x = self.moveDestinationX
-                self.boardFigures[self.moveOriginX][self.moveOriginY].y = self.moveDestinationY
-                self.boardFigures[self.moveDestinationX][self.moveDestinationY] = self.boardFigures[self.moveOriginX][self.moveOriginY]
+            f = self.boardFigures[self.moveOriginX][self.moveOriginY]
+            if f and f.mine and self.boardFigures[self.moveDestinationX][self.moveDestinationY] == False:
+                f.x = self.moveDestinationX
+                f.y = self.moveDestinationY
+                self.boardFigures[self.moveDestinationX][self.moveDestinationY] = f
                 self.boardFigures[self.moveOriginX][self.moveOriginY] = False
+                delta = abs( f.x - self.moveOriginX )
+                dY = abs( f.y - self.moveOriginY )
+                if dY > delta:
+                    delta = dY
+                self.log( "Me",  f.getName() + " moved " + str(delta) + " squares." )
+                
+    def log(self, player,  string):
+        self.ui.gameLog.insertHtml( "<span style='color: red; font-weight: bold'>&lt;"+player+"&gt;</span> "+string+"<br>" )
+        self.ui.gameLog.verticalScrollBar().setValue(self.ui.gameLog.verticalScrollBar().maximum())
+        return
                     
     '''
     findPath designed by Dr. Brandon Humpert - thanks for the help!

@@ -43,9 +43,12 @@ class SingleBaseClix(Clix):
         glTranslatef(-0.2, 1.45,  0)
         glScalef( 0.005,  0.005,  0.005 )
         glColor(0, 0, 0)
-        glutStrokeCharacter(GLUT_STROKE_ROMAN, 65);
         
         glPopMatrix()
+        
+        if self.tokens > 0:
+            self.drawTokens()
+
 
         if self.active > 0:
             #glPushMatrix()
@@ -66,9 +69,38 @@ class SingleBaseClix(Clix):
             glColor4f(cR, cG, cB, .2)
             self.drawBase()
             #glPopMatrix()
-            
+                        
         glPopMatrix()
             
+            
+    def drawTokens(self):
+        glPushMatrix()
+        glRotatef(-self.board.view_angle_y, 0.0, 1.0, 0.0)
+        if self.tokenColor == "red":
+            cR = 1
+            cG = 0.1
+            cB = 0.1
+        else:
+            cR = 0.1
+            cG = 0.1
+            cB = 1
+            
+        glColor(cR, cG, cB)
+        
+        if self.tokens == 2:
+            q = gluNewQuadric()
+            glTranslatef( 0.25,  0.5,  -0.25 )
+            gluSphere( q,  0.15,  10,  10 )
+            
+            q = gluNewQuadric()
+            glTranslatef( -0.5,  0,  0 )
+            gluSphere( q,  0.15,  10,  10 )
+        else:
+            q = gluNewQuadric()
+            glTranslatef( 0.25,  0.5,  -0.25 )
+            gluSphere( q,  0.15,  10,  10 )
+            
+        glPopMatrix()
 
     def drawBase(self):
         q = gluNewQuadric()

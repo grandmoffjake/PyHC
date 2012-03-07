@@ -1,4 +1,5 @@
 import math
+import random
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -15,8 +16,9 @@ class PyHC(Ui_MainWindow):
         self.MainWindow = MainWindow
         self.ui = ui
         ui.glFrame.setTitle( " " )
-        self.board = GameBoard(MainWindow)
+        self.board = GameBoard(MainWindow, ui)
         ui.vLayout.addWidget(self.board)
+        ui.gameLog.keyPressEvent = self.test
         MainWindow.keyPressEvent = self.test
         self.board.wheelEvent = self.zoomMap
         self.board.mouseMoveEvent = self.moveMap
@@ -26,92 +28,156 @@ class PyHC(Ui_MainWindow):
         self.lastX = False
         self.lastY = False
         
+        ui.cmdHeal.mousePressEvent = self.healClix
+        ui.cmdDamage.mousePressEvent = self.damageClix
+        ui.cmdTokenRed.mousePressEvent = self.tokenRed
+        ui.cmdTokenBlue.mousePressEvent = self.tokenBlue
+        ui.rollOne.mousePressEvent = self.rollOne
+        ui.rollTwo.mousePressEvent = self.rollTwo
+        
         self.myActiveClix = False
         self.theirActiveClix = False
         
         ui.myDial.setMouseTracking(True)
         ui.myDial.mouseMoveEvent = self.hoverMyDial
         
+    def getMyActiveClix(self):
+        c = self.myActiveClix
+        if c:
+            x,  y = c
+            f = self.board.boardFigures[x][y]
+            if f:
+                return f
+                
+        return False
+        
+    def rollOne(self, event):
+        v = random.randint( 1,  6 )
+        self.board.log( "Me",  "Rolled a "+str(v)+" on one die.")
+        return QtGui.QPushButton.mousePressEvent(self.ui.rollOne, event)
+    
+    def rollTwo(self, event):
+        v = random.randint( 2,  12 )
+        s = "Rolled a "+str(v)+" on two dice."
+        if v == 2:
+            s += "  <b>Crit miss!</b>"
+        elif v == 12:
+            s += "  <b>Critical hit!</b>"
+        self.board.log( "Me",  s )
+        return QtGui.QPushButton.mousePressEvent(self.ui.rollTwo, event)
+        
+    def healClix(self, event):
+        f = self.getMyActiveClix()
+        if f:
+            f.heal()
+            self.redrawMyDial()
+            
+        return QtGui.QPushButton.mousePressEvent(self.ui.cmdHeal, event)
+    
+    def damageClix(self, event):
+        f = self.getMyActiveClix()
+        if f:
+            f.damage()
+            self.redrawMyDial()
+            
+        return QtGui.QPushButton.mousePressEvent(self.ui.cmdDamage, event)
+        
+    def tokenRed(self, event):
+        f = self.getMyActiveClix()
+        if f:
+            f.token( "red" )
+            self.board.updateGL()
+            
+        return QtGui.QPushButton.mousePressEvent(self.ui.cmdTokenRed, event)
+        
+    def tokenBlue(self, event):
+        f = self.getMyActiveClix()
+        if f:
+            f.token( "blue" )
+            self.board.updateGL()
+
+        return QtGui.QPushButton.mousePressEvent(self.ui.cmdTokenBlue, event)
+    
+        
     def getBoardXY(self, event):
         v = self.board.viewport()
         winY = v[3] - event.y()
         winX = event.x()
-        #print event.x(),  event.y(),  winX,  winY
-        #if ( winX > 0 and winY > 0 ):
         winZ = self.board.getMouseZ(winX, winY)
         posX, posY, posZ = gluUnProject(winX, winY, winZ)
-        #self.board.x_pos = posX*-1
-        #m = 90-self.board.view_angle_x
-        #self.board.z_pos = posZ*m
-        #self.board.updateGL()
-        
-        #print math.ceil(posX)+11,  math.ceil(posZ)+11,  posX,  posZ
+
         x = int(math.ceil(posX)+11)
         y = int(math.ceil(posZ)+11)
         
         return [x, y]
-        #else:
-        #    return [0, 0]
         
     def hoverMyDial(self, event):
         if self.myActiveClix:
             f = self.board.boardFigures[self.myActiveClix[0]][self.myActiveClix[1]]
             t = f.getToolTip(event.pos())
             if t:
-                #p = QtCore.QPoint(event.globalX()-event.x(), event.globalY()-event.y())
-                QtGui.QToolTip.showText( event.globalPos(),  t,  self.ui.myDial )
+                QtGui.QToolTip.showText( event.globalPos(),  "<p>"+t+"</p>",  self.ui.myDial )
             else:
                 QtGui.QToolTip.hideText()
         
     def clickMap(self, event):
         x,  y = self.getBoardXY(event)
-        if ( self.board.boardFigures[x][y] and self.board.boardFigures[x][y].mine ):
-            f = self.board.boardFigures[x][y]
-            self.board.moving = True
-            self.board.moveOriginX = self.board.moveDestinationX = x
-            self.board.moveOriginY = self.board.moveDestinationY = y
-            
-            self.board.clearMyActive()
-            if f.mine:
-                self.myActiveClix = (x, y)
-                f.active = 1
-            else:
-                self.theirActiveClix = (x, y)
-                f.active = 2
+        if ( x >= 0 and x <= 23 and y >= 0 and y <= 23 ):
+            if ( self.board.boardFigures[x][y] ):
+                f = self.board.boardFigures[x][y]
+                self.board.moving = True
+                self.board.moveOriginX = self.board.moveDestinationX = x
+                self.board.moveOriginY = self.board.moveDestinationY = y
                 
-            print f.name
-            #print f.drawDial()
-            print f.getClick()
-            print f.describePower("spd", "SPC")
-            #qimg = QtGui.QImage.fromData(f.drawDial())
-            pixmap = QtGui.QPixmap()
-            pixmap.loadFromData(f.drawDial(), "PNG")
-            #ui.myDial.setText( f.getName() )
-            ui.myDial.setPixmap( pixmap )
-            ui.myDial.update()
-        #print self.board.moveOriginX,  self.board.moveOriginY
+                self.board.clearMyActive()
+                if f.mine:
+                    self.myActiveClix = (x, y)
+                    f.active = 1
+                    self.redrawMyDial()
+                else:
+                    self.theirActiveClix = (x, y)
+                    f.active = 2
+                    self.redrawTheirDial()
+            
+    def redrawMyDial(self):
+        f = self.board.boardFigures[self.myActiveClix[0]][self.myActiveClix[1]]
+        pixmap = QtGui.QPixmap()
+        pixmap.loadFromData(f.drawDial(), "PNG")
+        ui.myDial.setPixmap( pixmap )
+        ui.myDial.update()
+        
+    def redrawTheirDial(self):
+        f = self.board.boardFigures[self.theirActiveClix[0]][self.theirActiveClix[1]]
+        pixmap = QtGui.QPixmap()
+        pixmap.loadFromData(f.drawDial(), "PNG")
+        ui.theirDial.setPixmap( pixmap )
+        ui.theirDial.update()
         
     def doubleClickMap(self, event):
         x, y = self.getBoardXY(event)
-        f = self.board.boardFigures[x][y]
-        if f:
-            return
-        
+#        if ( x >= 0 and x <= 23 and y >= 0 and y <= 23 ):
+#            f = self.board.boardFigures[x][y]
+#            if f:
+#                f.damage()
+#                self.redrawMyDial()
+        return
+    
     def moveMap(self, event):
         x,  y = self.getBoardXY(event)
-        if self.board.moving  and ( (self.lastX == False and self.lastY == False ) or (self.lastX != x or self.lastY != y ) ) and event.x() > 0 and event.y() > 0:
-            self.board.moveDestinationX = x
-            self.board.moveDestinationY = y
-            self.lastX = x
-            self.lastY = y
-            f = self.board.boardFigures[self.board.moveOriginX][self.board.moveOriginY]
-            delta = abs( x - self.board.moveOriginX )
-            dY = abs( y - self.board.moveOriginY )
-            if dY > delta:
-                delta = dY
-            self.ui.glFrame.setTitle( "Moving "+f.getName()+" "+str(delta)+" space(s)..." )
-            #print self.board.moveDestinationX,  self.board.moveDestinationY
-            self.board.updateGL()
+        if ( x >= 0 and x <= 23 and y >= 0 and y <= 23 ):
+            if self.board.moving  and ( (self.lastX == False and self.lastY == False ) or (self.lastX != x or self.lastY != y ) ) and event.x() > 0 and event.y() > 0:
+                self.board.moveDestinationX = x
+                self.board.moveDestinationY = y
+                self.lastX = x
+                self.lastY = y
+                f = self.board.boardFigures[self.board.moveOriginX][self.board.moveOriginY]
+                delta = abs( x - self.board.moveOriginX )
+                dY = abs( y - self.board.moveOriginY )
+                if dY > delta:
+                    delta = dY
+                self.ui.glFrame.setTitle( "Moving "+f.getName()+" "+str(delta)+" space(s)..." )
+                #print self.board.moveDestinationX,  self.board.moveDestinationY
+                self.board.updateGL()
         
     def stopMoving(self, event):
         if self.board.moving:
