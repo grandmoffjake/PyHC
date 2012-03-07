@@ -1,7 +1,10 @@
 import xml.etree.ElementTree as ET
 import Image
 import ImageDraw
+import ImageFont
 import StringIO
+import os
+import sys
 
 class Clix:
     def __init__(self, parent):
@@ -65,6 +68,10 @@ class Clix:
         self.traits = self.xmlDial.find("traits")
         self.board = parent
         self.currentClick = 1
+        
+        images_path = os.path.join(sys.path[0], 'images')
+        
+        self.spd_symbol_image = Image.open( os.path.join(sys.path[0], 'images', 'wfoot.gif') )
         return 
         
     def getId(self):
@@ -111,7 +118,30 @@ class Clix:
     def drawDial(self):
         im = Image.new('RGBA', (150, 150),  (0, 0, 0, 0))
         draw = ImageDraw.Draw(im)
-        draw.rectangle( (10, 10, 90, 90 ),  fill="yellow",  outline="red" )
+        draw.ellipse( (0, 0, 150, 150 ),  fill="black" )
+        draw.polygon( [(55, 65), (55, 135), (60, 140), (95, 140),  (105, 135), (80, 65)], fill="white")
+        
+        if ( self.currentClick == 1 ):
+            draw.line( ( 57,  67,  57,  133 ),  fill="green",  width=2 )
+        
+        x = 65
+        y = 68
+        dY = 24
+        spd_xy = (x, y)
+        atk_xy = (x,  y+dY)
+        def_xy = (x-4,  y+dY+dY)
+        dmg_xy = (x+20,  y+dY+dY-1)
+        
+        SPD,  ATK,  DEF,  DMG = self.getClick()
+        fontPath = "/Library/Fonts/"
+        font = ImageFont.truetype(fontPath+"Arial.ttf", 14)
+        draw.text( spd_xy,  SPD[0],  font=font,  fill="black" )
+        draw.text( atk_xy,  ATK[0],  font=font,  fill="black" )
+        draw.text( def_xy,  DEF[0],  font=font,  fill="black" )
+        draw.text( dmg_xy,  DMG[0],  font=font,  fill="black" )
+        
+        im.paste( self.spd_symbol_image,  ( 20,  65 ) )
+        
         
         #This solution is ignorant, but for some reason Image.tostring can't get PNG data or any format easily understood by QPixmap
         output = StringIO.StringIO()
@@ -120,3 +150,6 @@ class Clix:
         output.close()
         
         return contents
+        
+    def getToolTip(self, xy):
+        return "Running Shot - Give this character a power action; halve its speed value for the action. Move this character up to its speed value and it may be given a ranged combat action as a free action."

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/Users/thejake/Documents/python/PyHC/mainForm.ui'
 #
-# Created: Tue Mar  6 00:22:28 2012
+# Created: Tue Mar  6 01:37:13 2012
 #      by: PyQt4 UI code generator 4.9
 #
 # WARNING! All changes made in this file will be lost!
@@ -55,21 +55,6 @@ class Ui_MainWindow(object):
         self.myDial.setText(_fromUtf8(""))
         self.myDial.setObjectName(_fromUtf8("myDial"))
         self.dialsLayout.addWidget(self.myDial)
-        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.dialsLayout.addItem(spacerItem1)
-        self.textBrowser = QtGui.QTextBrowser(self.verticalLayoutWidget)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(200)
-        sizePolicy.setHeightForWidth(self.textBrowser.sizePolicy().hasHeightForWidth())
-        self.textBrowser.setSizePolicy(sizePolicy)
-        self.textBrowser.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
-        self.textBrowser.setObjectName(_fromUtf8("textBrowser"))
-        self.dialsLayout.addWidget(self.textBrowser)
-        self.theirDial = QtGui.QWidget(self.verticalLayoutWidget)
-        self.theirDial.setMaximumSize(QtCore.QSize(16777215, 150))
-        self.theirDial.setObjectName(_fromUtf8("theirDial"))
-        self.dialsLayout.addWidget(self.theirDial)
         self.m.addWidget(self.dialsContainer)
         self.verticalLayout_2.addLayout(self.m)
         MainWindow.setCentralWidget(self.w)

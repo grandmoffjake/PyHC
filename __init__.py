@@ -26,6 +26,12 @@ class PyHC(Ui_MainWindow):
         self.lastX = False
         self.lastY = False
         
+        self.myActiveClix = False
+        self.theirActiveClix = False
+        
+        ui.myDial.setMouseTracking(True)
+        ui.myDial.mouseMoveEvent = self.hoverMyDial
+        
     def getBoardXY(self, event):
         v = self.board.viewport()
         winY = v[3] - event.y()
@@ -47,22 +53,30 @@ class PyHC(Ui_MainWindow):
         #else:
         #    return [0, 0]
         
+    def hoverMyDial(self, event):
+        if self.myActiveClix:
+            f = self.board.boardFigures[self.myActiveClix[0]][self.myActiveClix[1]]
+            t = f.getToolTip(event.pos())
+            if t:
+                #p = QtCore.QPoint(event.globalX()-event.x(), event.globalY()-event.y())
+                QtGui.QToolTip.showText( event.globalPos(),  t,  self.ui.myDial )
+            else:
+                QtGui.QToolTip.hideText()
+        
     def clickMap(self, event):
         x,  y = self.getBoardXY(event)
         if ( self.board.boardFigures[x][y] and self.board.boardFigures[x][y].mine ):
+            f = self.board.boardFigures[x][y]
             self.board.moving = True
             self.board.moveOriginX = self.board.moveDestinationX = x
             self.board.moveOriginY = self.board.moveDestinationY = y
-        #print self.board.moveOriginX,  self.board.moveOriginY
-        
-    def doubleClickMap(self, event):
-        x, y = self.getBoardXY(event)
-        f = self.board.boardFigures[x][y]
-        if ( f ):
+            
             self.board.clearMyActive()
             if f.mine:
+                self.myActiveClix = (x, y)
                 f.active = 1
             else:
+                self.theirActiveClix = (x, y)
                 f.active = 2
                 
             print f.name
@@ -75,8 +89,13 @@ class PyHC(Ui_MainWindow):
             #ui.myDial.setText( f.getName() )
             ui.myDial.setPixmap( pixmap )
             ui.myDial.update()
-            #ui.dialsLayout.addWidget(qimg)
-            self.board.updateGL()
+        #print self.board.moveOriginX,  self.board.moveOriginY
+        
+    def doubleClickMap(self, event):
+        x, y = self.getBoardXY(event)
+        f = self.board.boardFigures[x][y]
+        if f:
+            return
         
     def moveMap(self, event):
         x,  y = self.getBoardXY(event)
@@ -96,6 +115,8 @@ class PyHC(Ui_MainWindow):
         
     def stopMoving(self, event):
         if self.board.moving:
+            if( self.myActiveClix ):
+                self.myActiveClix = (self.board.moveDestinationX, self.board.moveDestinationY)
             self.ui.glFrame.setTitle( " " )
             self.board.moving = False
             self.board.moveSelectedFigure()
