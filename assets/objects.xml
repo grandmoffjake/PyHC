@@ -1,0 +1,207 @@
+<objects>
+	<object id="IG" name="Infinity Gauntlet" type="dial" points="10" loop="true">
+		<rules><![CDATA[<b>Cost</b><br/>Infinity Gauntlet costs 10 points, plus 5 points for each Gem attached to it. At least one Gem must be attached to the gauntlet to activate it. You can't attach more than one of the same type of gem.<br/>
+<b>Assign</b><br/>Infinity Gauntlet is assigned to a character when you reveal your force and only that character can use its effects. When assigned character is KO'd, opponent scores the Infinity Gauntlet.<br/>
+<b>Setup</b><br/>Infinity Gauntlet dial begins on the green line, but does not have a KO click; the dial may rotate past the starting line. You may not add special objects to your force if Infinity Gauntlet is part of it.<br/>
+<b>Turning the Dial</b><br/>At the end of your turn, if assigned character was given a non-free action this turn, choose one: 1) deal assigned character 1 unavoidable damage; or 2) roll a d6 that can't be rerolled and turn the Infinity Gauntlet dial to the right that many times; or 3) if Infinity Gauntlet dial has a special power visible, you may choose to do nothing.<br/>
+<b>Using Effects</b><br/>When a Gem, a standard power or a special power is revealed on the dial, assigned character can use the effects associated with that if they can't already. You may only use the Gem effects if that Gem is attached.<br/>
+<b>THE GAUNTLET COMPLETE</b><br/>If all six Gems are attached, character's powers and combat abilities can't be countered and character can use Willpower.<br/>
+		]]></rules>
+		<specials>
+			<special power="ONE" name="BEYOND MORTAL LIMITS" color="special" shape="circle">At the beginning of your turn, choose an attached gem that you did not choose during your last turn. Character can use the effects of that gem as long as this power is showing.</special>
+			<special power="TWO" name="APOTHEOSIS APPROACHING" color="special" shape="circle">Modify character's combat values by +1. At the beginning of your turn, choose a standard power character can't already use. Character can use that power until your next turn.</special>
+			<special power="THREE" name="ULTIMATE GODHOOD ATTAINED" color="special" shape="circle">Modify character's combat values by +2 and character can use the effects of every attached gem. At the beginning of your turn, choose a standard power character can't already use. Character can use that power until your next turn.</special>
+			<special power="SOULGEM" name="SOUL GEM" color="green" shape="circle">Character can use Steal Energy. When character KO's an opposing character, heal character of 2 damage.</special>
+			<special power="POWERGEM" name="POWER GEM" color="red" shape="circle">If character's printed range value is 4 or less, character can use Close Combat Expert. If character's range value is 5 or more, character can use Ranged Combat Expert.</special>
+			<special power="TIMEGEM" name="TIME GEM" color="orange" shape="circle">Character can use Incapacitate and Super Senses.</special>
+			<special power="SPACEGEM" name="SPACE GEM" color="purple" shape="circle">Character can use Phasing/Teleport and the Carry ability. Modify character's speed value by +2.</special>
+			<special power="REALITYGEM" name="REALITY GEM" color="yellow" shape="circle">Character can use Probability Control, but only during character's turn.</special>
+			<special power="MINDGEM" name="MIND GEM" color="lightblue" shape="circle">Character can use Mind Control and Telekinesis.</special>
+		</specials>
+		<dial length="26">
+			<click num="1">
+				<spd power="SPACEGEM"/>
+				<atk power="TIMEGEM"/>
+				<def power="POWERGEM"/>
+				<dmg power="TK" type="PAC">A</dmg>
+			</click>
+			<click num="2">
+				<spd power="REALITYGEM"/>
+				<atk power="SOULGEM"/>
+				<def power="TIMEGEM"/>
+				<dmg power="LC" type="PAC">S</dmg>
+			</click>
+			<click num="3">
+				<spd power="MINDGEM"/>
+				<atk power="POWERGEM"/>
+				<def power="SPACEGEM"/>
+				<dmg power="MM" type="PAC">D</dmg>
+			</click>
+			<click num="4">
+				<spd power="SOULGEM"/>
+				<atk power="TIMEGEM"/>
+				<def power="REALITYGEM"/>
+				<dmg power="MC" type="PAC">S</dmg>
+			</click>
+			<click num="5">
+				<spd power="POWERGEM"/>
+				<atk power="SOULGEM"/>
+				<def power="MINDGEM"/>
+				<dmg power="CHG" type="PAC">S</dmg>
+			</click>
+			<click num="6">
+				<spd power="MINDGEM"/>
+				<atk power="POWERGEM"/>
+				<def power="SOULGEM"/>
+				<dmg power="SSE" type="PAC">D</dmg>
+			</click>
+			<click num="7">
+				<spd power="SOULGEM"/>
+				<atk power="TIMEGEM"/>
+				<def power="MINDGEM"/>
+				<dmg power="STL" type="PAC">S</dmg>
+			</click>
+			<click num="8">
+				<spd power="POWERGEM"/>
+				<atk power="SPACEGEM"/>
+				<def power="REALITYGEM"/>
+				<dmg power="BCF" type="PAC">A</dmg>
+			</click>
+			<click num="9">
+				<spd power="TIMEGEM"/>
+				<atk power="REALITYGEM"/>
+				<def power="SOULGEM"/>
+				<dmg power="QK" type="PAC">A</dmg>
+			</click>
+			<click num="10">
+				<spd power="SPACEGEM"/>
+				<atk power="MINDGEM"/>
+				<def power="POWERGEM"/>
+				<dmg power="POI" type="PAC">A</dmg>
+			</click>
+			<click num="11">
+				<spd power="REALITYGEM"/>
+				<atk power="SOULGEM"/>
+				<def power="TIMEGEM"/>
+				<dmg power="COM" type="PAC">D</dmg>
+			</click>
+			<click num="12">
+				<spd power="MINDGEM"/>
+				<atk power="POWERGEM"/>
+				<def power="SPACEGEM"/>
+				<dmg power="PB" type="PAC">A</dmg>
+			</click>
+			<click num="13">
+				<spd power="SOULGEM"/>
+				<atk power="TIMEGEM"/>
+				<def power="REALITYGEM"/>
+				<dmg power="FLR" type="PAC">S</dmg>
+			</click>
+			<click num="14">
+				<spd power="POWERGEM"/>
+				<atk power="SPACEGEM"/>
+				<def power="MINDGEM"/>
+				<dmg power="ESD" type="PAC">D</dmg>
+			</click>
+			<click num="15">
+				<spd power="TIMEGEM"/>
+				<atk power="REALITYGEM"/>
+				<def power="ONE">1</def>
+				<dmg power="CCE" type="PAC">G</dmg>
+			</click>
+			<click num="16">
+				<spd power="SPACEGEM"/>
+				<atk power="MINDGEM"/>
+				<def power="ONE">1</def>
+				<dmg power="EW" type="PAC">G</dmg>
+			</click>
+			<click num="17">
+				<spd power="REALITYGEM"/>
+				<atk power="SPACEGEM"/>
+				<def power="ONE">1</def>
+				<dmg power="RCE" type="PAC">G</dmg>
+			</click>
+			<click num="18">
+				<spd power="MINDGEM"/>
+				<atk power="REALITYGEM"/>
+				<def power="ONE">1</def>
+				<dmg power="TOU" type="PAC">D</dmg>
+			</click>
+			<click num="19">
+				<spd power="SOULGEM"/>
+				<atk power="MINDGEM"/>
+				<def power="ONE">1</def>
+				<dmg power="INV" type="PAC">D</dmg>
+			</click>
+			<click num="20">
+				<spd power="POWERGEM"/>
+				<atk power="SOULGEM"/>
+				<def power="ONE">1</def>
+				<dmg power="IMP" type="PAC">D</dmg>
+			</click>
+			<click num="21">
+				<spd power="TIMEGEM"/>
+				<atk power="POWERGEM"/>
+				<def power="SOULGEM"/>
+				<dmg power="TWO">2</dmg>
+			</click>
+			<click num="22">
+				<spd power="SPACEGEM"/>
+				<atk power="TIMEGEM"/>
+				<def power="POWERGEM"/>
+				<dmg power="TWO">2</dmg>
+			</click>
+			<click num="23">
+				<spd power="REALITYGEM"/>
+				<atk power="SPACEGEM"/>
+				<def power="TIMEGEM"/>
+				<dmg power="TWO">2</dmg>
+			</click>
+			<click num="24">
+				<spd power="MINDGEM"/>
+				<atk power="REALITYGEM"/>
+				<def power="SPACEGEM"/>
+				<dmg power="TWO">2</dmg>
+			</click>
+			<click num="25">
+				<spd power="THREE">3</spd>
+				<atk/>
+				<def/>
+				<dmg/>
+			</click>
+			<click num="26">
+				<spd power="THREE">3</spd>
+				<atk/>
+				<def/>
+				<dmg/>
+			</click>
+		</dial>
+	</object>
+	<object id="IG-SG" name="Infinity Gauntlet - Soul Gem" type="hidden" points="5"/>
+	<object id="ihS101" name="Gamma Bomb" type="dial" points="5" ring="blue">
+		<rules><![CDATA[]]></rules>
+		<specials>
+			<special power="BOMB" color="yellowgreen" text="black"/>
+		</specials>
+		<dial length="12">
+			<click num="1"><spd/><atk power="BOMB">10</atk><def/><dmg/></click>
+			<click num="2"><spd/><atk power="BOMB">9</atk><def/><dmg/></click>
+			<click num="3"><spd/><atk power="BOMB">8</atk><def/><dmg/></click>
+			<click num="4"><spd/><atk power="BOMB">7</atk><def/><dmg/></click>
+			<click num="5"><spd/><atk power="BOMB">6</atk><def/><dmg/></click>
+			<click num="6"><spd/><atk power="BOMB">5</atk><def/><dmg/></click>
+			<click num="7"><spd/><atk power="BOMB">4</atk><def/><dmg/></click>
+			<click num="8"><spd/><atk power="BOMB">3</atk><def/><dmg/></click>
+			<click num="9"><spd/><atk power="BOMB">2</atk><def/><dmg/></click>
+			<click num="10"><spd/><atk power="BOMB">1</atk><def/><dmg/></click>
+			<click num="11" line="red"><spd/><atk power="BOMB">12</atk><def/><dmg/></click>
+			<click num="12"><spd/><atk power="BOMB">11</atk><def/><dmg/></click>
+		</dial>
+	</object>
+	<object id="LIGHT-1" name="Light Object 1" type="light" points="0"/>
+	<object id="LIGHT-2" name="Light Object 2" type="light" points="0"/>
+	<object id="LIGHT-3" name="Light Object 3" type="light" points="0"/>
+	<object id="HEAVY-1" name="Heavy Object 1" type="heavy" points="0"/>
+	<object id="HEAVY-2" name="Heavy Object 2" type="heavy" points="0"/>
+	<object id="HEAVY-3" name="Heavy Object 2" type="heavy" points="0"/>
+</objects>

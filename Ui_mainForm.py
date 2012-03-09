@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/Users/thejake/Documents/python/PyHC/mainForm.ui'
 #
-# Created: Wed Mar  7 01:16:06 2012
+# Created: Thu Mar  8 21:25:58 2012
 #      by: PyQt4 UI code generator 4.9
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,14 +17,38 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(902, 700)
+        MainWindow.resize(958, 701)
         self.w = QtGui.QWidget(MainWindow)
         self.w.setObjectName(_fromUtf8("w"))
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.w)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.m = QtGui.QHBoxLayout()
         self.m.setObjectName(_fromUtf8("m"))
+        self.widget_5 = QtGui.QWidget(self.w)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(20)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.widget_5.sizePolicy().hasHeightForWidth())
+        self.widget_5.setSizePolicy(sizePolicy)
+        self.widget_5.setMinimumSize(QtCore.QSize(30, 0))
+        self.widget_5.setMaximumSize(QtCore.QSize(30, 16777215))
+        self.widget_5.setObjectName(_fromUtf8("widget_5"))
+        self.verticalLayout_3 = QtGui.QVBoxLayout(self.widget_5)
+        self.verticalLayout_3.setMargin(0)
+        self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
+        self.cmdLOF = QtGui.QPushButton(self.widget_5)
+        self.cmdLOF.setCheckable(True)
+        self.cmdLOF.setObjectName(_fromUtf8("cmdLOF"))
+        self.verticalLayout_3.addWidget(self.cmdLOF)
+        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout_3.addItem(spacerItem)
+        self.m.addWidget(self.widget_5)
         self.glFrame = QtGui.QGroupBox(self.w)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.glFrame.sizePolicy().hasHeightForWidth())
+        self.glFrame.setSizePolicy(sizePolicy)
         self.glFrame.setTitle(_fromUtf8(""))
         self.glFrame.setObjectName(_fromUtf8("glFrame"))
         self.verticalLayout = QtGui.QVBoxLayout(self.glFrame)
@@ -33,9 +57,8 @@ class Ui_MainWindow(object):
         self.vLayout.setObjectName(_fromUtf8("vLayout"))
         self.verticalLayout.addLayout(self.vLayout)
         self.m.addWidget(self.glFrame)
-        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.m.addItem(spacerItem)
         self.dialsContainer = QtGui.QGroupBox(self.w)
+        self.dialsContainer.setMinimumSize(QtCore.QSize(192, 0))
         self.dialsContainer.setMaximumSize(QtCore.QSize(192, 16777215))
         self.dialsContainer.setTitle(_fromUtf8(""))
         self.dialsContainer.setObjectName(_fromUtf8("dialsContainer"))
@@ -146,6 +169,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
+        self.cmdLOF.setText(QtGui.QApplication.translate("MainWindow", "L", None, QtGui.QApplication.UnicodeUTF8))
         self.rollTwo.setText(QtGui.QApplication.translate("MainWindow", "2", None, QtGui.QApplication.UnicodeUTF8))
         self.rollOne.setText(QtGui.QApplication.translate("MainWindow", "1", None, QtGui.QApplication.UnicodeUTF8))
         self.cmdHeal.setText(QtGui.QApplication.translate("MainWindow", "H", None, QtGui.QApplication.UnicodeUTF8))

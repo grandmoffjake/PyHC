@@ -10,6 +10,7 @@ import math
 import Image
 from fractions import Fraction
 from SingleBaseClix import *
+from ObjectDialClix import *
 from MapLine import *
 
 from OpenGL.GL import *
@@ -43,18 +44,23 @@ class GameBoard(QGLWidget):
         for i in range(0, 24):
             self.boardFigures.append([False]*24)
         
-        s = SingleBaseClix(self)
+        s = SingleBaseClix(self, False)
         s.x = 2
         s.y = 2
         
-        b = SingleBaseClix(self)
+        b = SingleBaseClix(self, False)
         b.x = 23
         b.y = 2
         b.tokenColor = "blue"
         b.mine = False
         
+        q = ObjectDialClix(self)
+        q.x = 0
+        q.y = 0
+        
         self.boardFigures[b.x][b.y] = b
         self.boardFigures[s.x][s.y] = s
+        self.boardFigures[q.x][q.y] = q
         
 
         self.setMinimumSize(500, 500)
@@ -204,18 +210,19 @@ class GameBoard(QGLWidget):
         #print self.moveOriginX,  self.moveOriginY,  self.moveDestinationX,  self.moveDestinationY
         glPopMatrix()
         
-        self.highlightSquare( self.moveDestinationX,  self.moveDestinationY )
+        #self.highlightSquare( self.moveDestinationX,  self.moveDestinationY )
         
         #Just testing this - it needs to move to the Line of Fire mode instead
         dX = self.moveDestinationX-self.moveOriginX
         dY = self.moveDestinationY-self.moveOriginY
         
-        if ( abs(dX) > 1 and abs(dY) >1 ):
+        if ( abs(dX) > 0 or abs(dY) > 0 ):
             l = self.findPath( int(self.moveOriginX),  int(self.moveOriginY),  int(self.moveDestinationX), int(self.moveDestinationY) )
+            #print l
             for coord in l:
                 x,  y = coord
-                if ( x != self.moveOriginX and y != self.moveOriginY ) and ( x != self.moveDestinationX and y != self.moveDestinationY ):
-                    self.highlightSquare( x,  y )
+                #if ( x != self.moveOriginX or y != self.moveOriginY ) or ( x != self.moveDestinationX or y != self.moveDestinationY ):
+                self.highlightSquare( x,  y )
 
         
     def highlightSquare(self, x,  y):

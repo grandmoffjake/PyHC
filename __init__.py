@@ -129,7 +129,7 @@ class PyHC(Ui_MainWindow):
                 self.board.moveOriginX = self.board.moveDestinationX = x
                 self.board.moveOriginY = self.board.moveDestinationY = y
                 
-                self.board.clearMyActive()
+                #self.board.clearMyActive()
                 if f.mine:
                     self.myActiveClix = (x, y)
                     f.active = 1
