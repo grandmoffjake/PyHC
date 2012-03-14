@@ -1,4 +1,10 @@
 from Clix import *
+from OpenGL.GL import *
+from OpenGL.GLU import *
+
+r = 0.5
+d = 0.2
+t = 2
 
 class FigureClix(Clix):
     def __init__(self, parent, XML):
@@ -14,6 +20,8 @@ class FigureClix(Clix):
         self.currentAtkPower = False
         self.currentDefPower = False
         self.currentDmgPower = False
+        self.mine = True
+        self.heldObjects = []
         
         self.trait_symbol_image = self.spd_symbol_image = self.atk_symbol_image = self.def_symbol_image = self.dmg_symbol_image = False
         
@@ -129,6 +137,112 @@ class FigureClix(Clix):
         else:
             self.tokens = 0
             self.board.log( "Me",  self.getName() + " cleared." )
+            
+    def takeObject(self,  o):
+        o.heldBy = self
+        self.heldObjects.append( o )
+        self.board.boardObjects[o.x][o.y] = False
+        self.board.log( "Me",  self.getName() + " picked up " + o.getName() + "." )
+        return True
+        
+    def dropObject(self):
+        if len(self.heldObjects)>0:
+            square = False
+            if not self.board.boardObjects[self.x][self.y]:
+                square = (self.x, self.y)
+            else:
+                for i in range(self.x-1, self.x+1):
+                    for j in range(self.y-1, self.y+1):
+                        if not self.board.boardObjects[i][j]:
+                            square = (i, j)
+                            break
+                            
+            if square:
+                o = self.heldObjects.pop()
+                o.x = square[0]
+                o.y = square[1]
+                self.board.boardObjects[o.x][o.y] = o
+                o.heldBy = False
+                self.board.log( "Me",  self.getName() + " dropped " + o.getName() + "." )
+            else:
+                self.board.log( "Me",  self.getName() + " cannot drop object." )
+                
+    def hasObject(self):
+        if len(self.heldObjects) > 0:
+            return True
+        return False
+            
+    def draw(self):
+        glPushMatrix()
+        
+        h = 12
+        glDisable(GL_TEXTURE_2D)
+        glRotatef(90,  1.0, 0.0, 0.0)
+        glTranslatef(-h+r+self.x, -h+r+self.y,  -d)
+        
+        glPushMatrix()
+        
+        if self.active == 1:
+            cR = 0.1
+            cG = 0.8
+            cB = 0.1
+        elif self.active == 2:
+            cR = 0.1
+            cG = 1
+            cB = 1
+        else:
+            cR = 0.1
+            cG = 0.1
+            cB = 0.1
+        glColor(cR, cG, cB)
+        self.drawBase()
+        
+        glRotatef(-90,  1.0, 0.0, 0.0)
+        
+        glRotatef(-self.board.view_angle_y, 0.0, 1.0, 0.0)
+        glColor(255, 255, 255)
+        glRectf( -r,  0,  r,  t )
+        
+        glPopMatrix()
+        
+        if self.tokens > 0:
+            self.drawTokens()
+            
+        if self.hasObject():
+            self.drawObjects()
+            
+        glPopMatrix()
+        return
+
+        if self.active > 0:
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glEnable(GL_BLEND);
+            if self.active == 1:
+                cR = 0.1
+                cG = 1
+                cB = 0.1
+            elif self.active == 2:
+                cR = 0.1
+                cG = 1
+                cB = 1
+            glScalef(1.2, 1.2, 1.2)
+            glColor4f(cR, cG, cB, .5)
+            self.drawBase()
+            glScalef(1.25, 1.25, 1.25)
+            glColor4f(cR, cG, cB, .2)
+            self.drawBase()
+            
+    def drawObjects(self):
+        glPushMatrix()
+        #glRotatef(-self.board.view_angle_y, 0.0, 1.0, 0.0)
+        
+        glTranslatef( 0.2,  0,  0 )
+        for o in self.heldObjects:
+            glTranslatef( 0.1,  0,  -0.1 )
+            o.draw()
+
+        
+        glPopMatrix()
             
     def drawValues(self, im, draw, click, font):
         x = 65

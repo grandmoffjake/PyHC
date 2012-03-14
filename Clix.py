@@ -160,7 +160,7 @@ class Clix:
         if self.trait_symbol_image:
             im.paste( self.trait_symbol_image,  ( 14,  93 ) )
             
-        print self.trait_symbol_image
+        #print self.trait_symbol_image
         
         #This solution is ignorant, but for some reason Image.tostring can't get PNG data or any format easily understood by QPixmap
         output = StringIO.StringIO()

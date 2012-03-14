@@ -198,6 +198,9 @@ class ObjectDialClix(SingleBaseClix):
         if self.specials:
             for s in self.specials:
                 self.powers[s.get("power")] = s
+                
+    def takeObject(self, o):
+        return False
         
     def describeAbility(self, ability):
         return
@@ -231,7 +234,7 @@ class ObjectDialClix(SingleBaseClix):
                 return self.board.PAC.getDescription(code)
         return ""
         
-    def token(self):
+    def token(self, color):
         return
         
     def getColors(self, power):

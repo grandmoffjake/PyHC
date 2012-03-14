@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/Users/thejake/Documents/python/PyHC/mainForm.ui'
 #
-# Created: Thu Mar  8 21:25:58 2012
+# Created: Tue Mar 13 22:40:55 2012
 #      by: PyQt4 UI code generator 4.9
 #
 # WARNING! All changes made in this file will be lost!
@@ -40,6 +40,33 @@ class Ui_MainWindow(object):
         self.cmdLOF.setCheckable(True)
         self.cmdLOF.setObjectName(_fromUtf8("cmdLOF"))
         self.verticalLayout_3.addWidget(self.cmdLOF)
+        self.cmdObj = QtGui.QPushButton(self.widget_5)
+        self.cmdObj.setCheckable(True)
+        self.cmdObj.setObjectName(_fromUtf8("cmdObj"))
+        self.verticalLayout_3.addWidget(self.cmdObj)
+        self.cmdStandies = QtGui.QPushButton(self.widget_5)
+        self.cmdStandies.setCheckable(True)
+        self.cmdStandies.setObjectName(_fromUtf8("cmdStandies"))
+        self.verticalLayout_3.addWidget(self.cmdStandies)
+        self.cmdRemoveObject = QtGui.QPushButton(self.widget_5)
+        self.cmdRemoveObject.setObjectName(_fromUtf8("cmdRemoveObject"))
+        self.verticalLayout_3.addWidget(self.cmdRemoveObject)
+        self.cmdBarrier = QtGui.QPushButton(self.widget_5)
+        self.cmdBarrier.setCheckable(True)
+        self.cmdBarrier.setObjectName(_fromUtf8("cmdBarrier"))
+        self.verticalLayout_3.addWidget(self.cmdBarrier)
+        self.cmdSmokeCloud = QtGui.QPushButton(self.widget_5)
+        self.cmdSmokeCloud.setCheckable(True)
+        self.cmdSmokeCloud.setObjectName(_fromUtf8("cmdSmokeCloud"))
+        self.verticalLayout_3.addWidget(self.cmdSmokeCloud)
+        self.cmdDebris = QtGui.QPushButton(self.widget_5)
+        self.cmdDebris.setCheckable(True)
+        self.cmdDebris.setObjectName(_fromUtf8("cmdDebris"))
+        self.verticalLayout_3.addWidget(self.cmdDebris)
+        self.cmdSpecial = QtGui.QPushButton(self.widget_5)
+        self.cmdSpecial.setCheckable(True)
+        self.cmdSpecial.setObjectName(_fromUtf8("cmdSpecial"))
+        self.verticalLayout_3.addWidget(self.cmdSpecial)
         spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_3.addItem(spacerItem)
         self.m.addWidget(self.widget_5)
@@ -63,7 +90,7 @@ class Ui_MainWindow(object):
         self.dialsContainer.setTitle(_fromUtf8(""))
         self.dialsContainer.setObjectName(_fromUtf8("dialsContainer"))
         self.verticalLayoutWidget = QtGui.QWidget(self.dialsContainer)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(0, 0, 191, 671))
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(0, 0, 225, 671))
         self.verticalLayoutWidget.setObjectName(_fromUtf8("verticalLayoutWidget"))
         self.dialsLayout = QtGui.QVBoxLayout(self.verticalLayoutWidget)
         self.dialsLayout.setMargin(0)
@@ -170,6 +197,13 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
         self.cmdLOF.setText(QtGui.QApplication.translate("MainWindow", "L", None, QtGui.QApplication.UnicodeUTF8))
+        self.cmdObj.setText(QtGui.QApplication.translate("MainWindow", "O", None, QtGui.QApplication.UnicodeUTF8))
+        self.cmdStandies.setText(QtGui.QApplication.translate("MainWindow", "S", None, QtGui.QApplication.UnicodeUTF8))
+        self.cmdRemoveObject.setText(QtGui.QApplication.translate("MainWindow", "R", None, QtGui.QApplication.UnicodeUTF8))
+        self.cmdBarrier.setText(QtGui.QApplication.translate("MainWindow", "B", None, QtGui.QApplication.UnicodeUTF8))
+        self.cmdSmokeCloud.setText(QtGui.QApplication.translate("MainWindow", "Sm", None, QtGui.QApplication.UnicodeUTF8))
+        self.cmdDebris.setText(QtGui.QApplication.translate("MainWindow", "D", None, QtGui.QApplication.UnicodeUTF8))
+        self.cmdSpecial.setText(QtGui.QApplication.translate("MainWindow", "Sp", None, QtGui.QApplication.UnicodeUTF8))
         self.rollTwo.setText(QtGui.QApplication.translate("MainWindow", "2", None, QtGui.QApplication.UnicodeUTF8))
         self.rollOne.setText(QtGui.QApplication.translate("MainWindow", "1", None, QtGui.QApplication.UnicodeUTF8))
         self.cmdHeal.setText(QtGui.QApplication.translate("MainWindow", "H", None, QtGui.QApplication.UnicodeUTF8))

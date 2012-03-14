@@ -11,6 +11,7 @@ import Image
 from fractions import Fraction
 from SingleBaseClix import *
 from ObjectDialClix import *
+from ObjectSimpleClix import *
 from MapLine import *
 
 from OpenGL.GL import *
@@ -39,11 +40,15 @@ class GameBoard(QGLWidget):
         self.moveOriginY = 0
         self.moveDestinationX = 0
         self.moveDestinationY = 0
+        self.modeLOF = False
+        self.modeObject = False
         
         self.boardFigures = []
+        self.boardObjects = []
         for i in range(0, 24):
             self.boardFigures.append([False]*24)
-        
+            self.boardObjects.append([False]*24)
+            
         s = SingleBaseClix(self, False)
         s.x = 2
         s.y = 2
@@ -58,9 +63,18 @@ class GameBoard(QGLWidget):
         q.x = 0
         q.y = 0
         
+        o = ObjectSimpleClix(self, False)
+        o.x = 4
+        o.y = 19
+        o2 = ObjectSimpleClix(self, False)
+        o2.x = 4
+        o2.y = 20
+        
         self.boardFigures[b.x][b.y] = b
         self.boardFigures[s.x][s.y] = s
         self.boardFigures[q.x][q.y] = q
+        self.boardObjects[o.x][o.y] = o
+        self.boardObjects[o2.x][o2.y] = o2
         
 
         self.setMinimumSize(500, 500)
@@ -136,6 +150,8 @@ class GameBoard(QGLWidget):
             for j in range(0, 24):
                 if self.boardFigures[i][j]:
                     self.boardFigures[i][j].draw()
+                if self.boardObjects[i][j]:
+                    self.boardObjects[i][j].draw()
                     
         if self.moving:
             self.drawMoveLine()
@@ -187,7 +203,10 @@ class GameBoard(QGLWidget):
         
     def drawMoveLine(self):
         glPushMatrix()
-        glColor(0, 0,  0)
+        if self.modeLOF:
+            glColor(1, 1, 1)
+        else:
+            glColor(0, 0,  0)
         #glRotatef(15,  0.0, 1.0, 0.0)
         glTranslatef(0, 0.2, 0)
         h = 4
@@ -231,30 +250,50 @@ class GameBoard(QGLWidget):
         glTranslatef(0, 0, -0.1)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glEnable(GL_BLEND);
-        glColor4f(.1, 1, .1, 0.2)
+        if self.modeLOF:
+            glColor4f(1, 0, 0, 0.5)
+        else:
+            glColor4f(.1, 1, .1, 0.2)
         glRectf( x-12,  y-12,  x-11,  y-11 )
         glPopMatrix()
         return
         
-    def clearMyActive(self):
+    def clearActive(self,  type):
         for i in range(0, 24):
             for j in range(0, 24):
-                if self.boardFigures[i][j] and self.boardFigures[i][j].active == 1:
+                if self.boardFigures[i][j] and self.boardFigures[i][j].active == type:
                     self.boardFigures[i][j].active = 0
                     
     def moveSelectedFigure(self):
         if self.moveOriginX != self.moveDestinationX or self.moveOriginY != self.moveDestinationY:
-            f = self.boardFigures[self.moveOriginX][self.moveOriginY]
-            if f and f.mine and self.boardFigures[self.moveDestinationX][self.moveDestinationY] == False:
-                f.x = self.moveDestinationX
-                f.y = self.moveDestinationY
-                self.boardFigures[self.moveDestinationX][self.moveDestinationY] = f
-                self.boardFigures[self.moveOriginX][self.moveOriginY] = False
-                delta = abs( f.x - self.moveOriginX )
-                dY = abs( f.y - self.moveOriginY )
-                if dY > delta:
-                    delta = dY
-                self.log( "Me",  f.getName() + " moved " + str(delta) + " squares." )
+            
+            if self.modeObject:
+                
+                f = self.boardObjects[self.moveOriginX][self.moveOriginY]
+                if f and f.mine and self.boardObjects[self.moveDestinationX][self.moveDestinationY] == False:
+                    f.x = self.moveDestinationX
+                    f.y = self.moveDestinationY
+                    self.boardObjects[self.moveDestinationX][self.moveDestinationY] = f
+                    self.boardObjects[self.moveOriginX][self.moveOriginY] = False
+                    delta = abs( f.x - self.moveOriginX )
+                    dY = abs( f.y - self.moveOriginY )
+                    if dY > delta:
+                        delta = dY
+                    self.log( "Me",  f.getName() + " moved " + str(delta) + " squares." )
+                
+            else:
+            
+                f = self.boardFigures[self.moveOriginX][self.moveOriginY]
+                if f and f.mine and self.boardFigures[self.moveDestinationX][self.moveDestinationY] == False:
+                    f.x = self.moveDestinationX
+                    f.y = self.moveDestinationY
+                    self.boardFigures[self.moveDestinationX][self.moveDestinationY] = f
+                    self.boardFigures[self.moveOriginX][self.moveOriginY] = False
+                    delta = abs( f.x - self.moveOriginX )
+                    dY = abs( f.y - self.moveOriginY )
+                    if dY > delta:
+                        delta = dY
+                    self.log( "Me",  f.getName() + " moved " + str(delta) + " squares." )
                 
     def log(self, player,  string):
         self.ui.gameLog.insertHtml( "<span style='color: red; font-weight: bold'>&lt;"+player+"&gt;</span> "+string+"<br>" )
