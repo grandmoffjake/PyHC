@@ -39,17 +39,34 @@ class ObjectSimpleSquare():
         glPopMatrix()
         
     def drawBase(self):
-        #These should be replaced with textures
+        glEnable(GL_TEXTURE_2D)
+        
         if self.type == "barrier":
-            glColor( 0.65, 0.454, 0 )
+        #    glColor( 0.65, 0.454, 0 )
+            glBindTexture(GL_TEXTURE_2D, self.board.namedTextures['barrier'])
         elif self.type == "smoke cloud":
-            glColor( 0.498, 0.349, 0.5294 )
+            glBindTexture(GL_TEXTURE_2D, self.board.namedTextures['smokecloud'])
+        #    glColor( 0.498, 0.349, 0.5294 )
         elif self.type == "debris":
-            glColor( 0.6313, 0.6313,  0.6313 )
+            glBindTexture(GL_TEXTURE_2D, self.board.namedTextures['debris'])
+        #    glColor( 0.6313, 0.6313,  0.6313 )
         elif self.type == "special":
-            glColor( 0, 0,  1 )
+            glBindTexture(GL_TEXTURE_2D, self.board.namedTextures['special'])
+        #    glColor( 0, 0,  1 )
             
-        glRectf( -r,  -r,  r,  r )
+        
+        glBegin(GL_QUADS)
+        glTexCoord2f(0.0, 0.0); 
+        glVertex3f(-r, -r, 0.0)
+        glTexCoord2f(1.0, 0.0); 
+        glVertex3f(r, -r, 0.0)
+        glTexCoord2f(1.0, 1.0); 
+        glVertex3f(r, r, 0.0)
+        glTexCoord2f(0.0, 1.0); 
+        glVertex3f(-r, r, 0.0)
+        glEnd()
+            
+        #glRectf( -r,  -r,  r,  r )
         
     def drawDial(self):
         return False

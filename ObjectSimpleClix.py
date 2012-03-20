@@ -14,10 +14,6 @@ t = 2
 
 class ObjectSimpleClix(Clix):
     def __init__(self, parent, XML):
-        if not XML:
-            XML = '''
-            <object id="HEAVY-1" name="Heavy Object 1" type="heavy" points="0"/>
-            '''
         Clix.__init__(self, parent, XML)
         
         self.baseColor = "red"

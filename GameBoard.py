@@ -21,10 +21,15 @@ from PyQt4 import QtGui
 from PyQt4.QtOpenGL import *
 from PAC import *
 
+import os
+import sys
+from lxml import etree
+
+
 class GameBoard(QGLWidget):
     
     def __init__(self, parent, ui):
-        QGLWidget.__init__(self, parent)
+        QGLWidget.__init__(self, ui)
         self.view_angle_x = 90
         self.view_angle_y = 0
         self.view_distance = 1.0
@@ -43,12 +48,124 @@ class GameBoard(QGLWidget):
         self.modeLOF = False
         self.modeObject = False
         
+        self.myFigures = []
+        self.theirFigures = []
+        self.objects = []
+        
+        self.namedTextures = {}
+        
         self.boardFigures = []
         self.boardObjects = []
         for i in range(0, 24):
             self.boardFigures.append([False]*24)
             self.boardObjects.append([False]*24)
             
+        myteam = '''
+        <team>
+            <figure id="mnm005" set="mnm"/>
+            <figure id="mnm008" set="mnm"/>
+            <figure id="mnm009" set="mnm"/>
+            <figure id="mnm009" set="mnm"/>
+            <figure id="mnm009" set="mnm"/>
+            <object id="HEAVY-1"/>
+            <object id="LIGHT-1"/>
+            <object id="ihS101" type="dial"/>
+        </team>
+        '''
+        
+        self.addTeam(myteam, True)
+
+        self.setMinimumSize(500, 500)
+        
+    def addTeam(self, teamXml, mine):
+        team = etree.fromstring(teamXml)
+        figures = team.findall("figure")
+        objects = team.findall("object")
+        
+        print objects
+        
+        objectsXml = etree.parse(os.path.join(sys.path[0], 'assets', 'objects.xml'))
+        
+        sets = {}
+        
+        teamArr = []
+        teamObjects = []
+        
+        for fn in figures:
+            type = fn.get("type")
+            if not type:
+                type = "single"
+                                
+            setName = fn.get("set")
+                
+            if setName not in sets.keys():
+                setXml = os.path.join(sys.path[0], 'sets', setName+'.xml')
+                sets[setName] = etree.parse(setXml)
+                
+            fXml = sets[setName].xpath("//figure[@id='"+fn.get("id")+"']")
+            if len(fXml):
+                if type == "single":
+                    f = SingleBaseClix(self, fXml[0])
+                    f.mine = mine
+                    teamArr.append(f)
+                    
+        for ob in objects:
+            type = ob.get("type")
+            
+            oXml = objectsXml.xpath("//object[@id='"+ob.get("id")+"']")
+            if len(oXml):
+                if type == "dial":
+                    o = ObjectDialClix(self, oXml[0])
+                    o.mine = mine
+                    teamArr.append(o)
+                else:
+                    o = ObjectSimpleClix(self, oXml[0])
+                    o.mine = True
+                    teamObjects.append(o)
+            
+        xOffset = yOffset = i = 0
+        z = 1
+        x = 12
+        if mine:
+            y = 22
+        else:
+            y = 0
+        for f in teamArr:
+            if z == -1:
+                i += 1
+            if i > 23:
+                i = 0
+                yOffset += 1
+            xOffset = i*z
+            z = z*-1
+            f.x = x+xOffset
+            f.y = y+yOffset
+            self.myFigures.append( f )
+            self.boardFigures[f.x][f.y] = f
+        
+        xOffset = yOffset = i = 0
+        z = 1
+        x = 12
+        if mine:
+            y = 21
+        else:
+            y = 2
+        for f in teamObjects:
+            if z == -1:
+                i += 1
+            if i > 23:
+                i = 0
+                yOffset -= 1
+            xOffset = i*z
+            z = z*-1
+            f.x = x+xOffset
+            f.y = y+yOffset
+            self.objects.append( f )
+            self.boardObjects[f.x][f.y] = f
+        
+        
+        return
+        
         s = SingleBaseClix(self, False)
         s.x = 2
         s.y = 2
@@ -77,8 +194,6 @@ class GameBoard(QGLWidget):
         self.boardObjects[o2.x][o2.y] = o2
         
 
-        self.setMinimumSize(500, 500)
-
     def paintGL(self):
         '''
         Drawing routine
@@ -88,6 +203,13 @@ class GameBoard(QGLWidget):
         
         if (hasattr( self,  'Textures') == False):
             self.Textures = glGenTextures(2)
+            self.Tiles = glGenTextures(4)
+            self.myTeamTextures = glGenTextures(len(self.myFigures)+1)
+            i = 0
+            for f in self.myFigures:
+                f.texture = self.myTeamTextures[i]
+                f.regenerateTexture()
+                i += 1
             
             GridFile = '/Users/thejake/Documents/HCOL/maps/Small_Town.jpg'
             im = Image.open(GridFile)
@@ -103,6 +225,39 @@ class GameBoard(QGLWidget):
                           GL_RGBA, GL_UNSIGNED_BYTE, GridData )
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+            
+            im = Image.open(os.path.join(sys.path[0], 'assets', 'barrier.png'))
+            BarrierData = im.convert("RGBA").tostring("raw", "RGBA")
+            glBindTexture(GL_TEXTURE_2D, self.Tiles[0])
+            glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, im.size[0], im.size[1], 0, GL_RGBA, GL_UNSIGNED_BYTE, BarrierData )
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+            self.namedTextures['barrier'] = self.Tiles[0]
+            
+            im = Image.open(os.path.join(sys.path[0], 'assets', 'smokecloud.png'))
+            BarrierData = im.convert("RGBA").tostring("raw", "RGBA")
+            glBindTexture(GL_TEXTURE_2D, self.Tiles[1])
+            glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, im.size[0], im.size[1], 0, GL_RGBA, GL_UNSIGNED_BYTE, BarrierData )
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+            self.namedTextures['smokecloud'] = self.Tiles[1]
+
+            im = Image.open(os.path.join(sys.path[0], 'assets', 'debris.png'))
+            BarrierData = im.convert("RGBA").tostring("raw", "RGBA")
+            glBindTexture(GL_TEXTURE_2D, self.Tiles[2])
+            glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, im.size[0], im.size[1], 0, GL_RGBA, GL_UNSIGNED_BYTE, BarrierData )
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+            self.namedTextures['debris'] = self.Tiles[2]
+
+            im = Image.open(os.path.join(sys.path[0], 'assets', 'special.png'))
+            BarrierData = im.convert("RGBA").tostring("raw", "RGBA")
+            glBindTexture(GL_TEXTURE_2D, self.Tiles[3])
+            glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, im.size[0], im.size[1], 0, GL_RGBA, GL_UNSIGNED_BYTE, BarrierData )
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+            self.namedTextures['special'] = self.Tiles[3]
+
         
         glTranslatef(self.x_pos, self.y_pos, -30.0*self.view_distance+self.z_pos)
         glRotatef(self.view_angle_x,  1.0, 0.0, 0.0)

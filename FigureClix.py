@@ -1,6 +1,9 @@
 from Clix import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
+import Image
+import ImageDraw
+
 
 r = 0.5
 d = 0.2
@@ -37,7 +40,7 @@ class FigureClix(Clix):
             for t in teams:
                 self.team_symbols.append(Image.open( os.path.join(sys.path[0], 'images', self.getTeamImage(t.text)) ))
                 
-        if self.symbols:
+        if self.symbols is not None:
             s = self.symbols.findtext("spd")
             if s == "Wing":
                 self.spd_symbol_image = Image.open( os.path.join(sys.path[0], 'images', 'units-m-wing.gif') ).convert('RGB').convert('P', palette=Image.ADAPTIVE)
@@ -171,6 +174,23 @@ class FigureClix(Clix):
         if len(self.heldObjects) > 0:
             return True
         return False
+        
+    def regenerateTexture(self):
+        if self.texture:
+            #im = Image.open(os.path.join(sys.path[0], 'assets', 'barrier.png'))
+            #BarrierData = im.convert("RGBA").tostring("raw", "RGBA")
+            im = Image.new('RGBA', (100, 150))
+            draw = ImageDraw.Draw(im)
+            #draw.ellipse( (0, 0, 150, 150 ),  fill="black" )
+            im, draw = self.drawTexture(im, draw)
+            TextureData = im.convert("RGBA").tostring("raw", "RGBA")
+
+            glBindTexture(GL_TEXTURE_2D, self.texture)
+            glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, im.size[0], im.size[1], 0, GL_RGBA, GL_UNSIGNED_BYTE, TextureData )
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+            self.board.updateGL()
+
             
     def draw(self):
         glPushMatrix()
@@ -200,8 +220,19 @@ class FigureClix(Clix):
         glRotatef(-90,  1.0, 0.0, 0.0)
         
         glRotatef(-self.board.view_angle_y, 0.0, 1.0, 0.0)
-        glColor(255, 255, 255)
-        glRectf( -r,  0,  r,  t )
+        glColor(1, 1, 1)
+        if self.texture:
+            glEnable(GL_TEXTURE_2D)
+            glBindTexture(GL_TEXTURE_2D, self.texture)
+            glBegin(GL_QUADS)
+            glTexCoord2f(0.0, 1.0); glVertex3f(-r, 0, 0.0)
+            glTexCoord2f(1.0, 1.0); glVertex3f(r, 0, 0.0)
+            glTexCoord2f(1.0, 0.0); glVertex3f(r, t, 0.0)
+            glTexCoord2f(0.0, 0.0); glVertex3f(-r, t, 0.0)
+            glEnd()
+            glDisable(GL_TEXTURE_2D)
+        else:
+            glRectf( -r,  0,  r,  t )
         
         glPopMatrix()
         
@@ -244,47 +275,52 @@ class FigureClix(Clix):
         
         glPopMatrix()
             
-    def drawValues(self, im, draw, click, font):
-        x = 65
+    def drawValues(self, im, draw, click, font, xOffset):
+        x = 65+xOffset
         y = 68
         dY = 24
         dX = 13
         
-        spd_txt = atk_text = def_text = dmg_text = "black"
+        spd_text = atk_text = def_text = dmg_text = "black"
         
         if click:
             self.currentSpdPower = click[0].get("power")
             self.currentAtkPower = click[1].get("power")
             self.currentDefPower = click[2].get("power")
             self.currentDmgPower = click[3].get("power")
+            
+            spd_box = [(60+xOffset, 67), (78+xOffset, 85)]
+            atk_box = [(60+xOffset, 90), (78+xOffset, 108)]
+            def_box = [(60+xOffset, 115), (78+xOffset, 133)]
+            dmg_box = [(83+xOffset, 114), (101+xOffset, 132)]
 
             if self.currentSpdPower == "SPC":
-                draw.rectangle( self.spd_box,  outline="black",  fill="white" )
+                draw.rectangle( spd_box,  outline="black",  fill="white" )
             elif self.currentSpdPower:
                 c = self.board.PAC.getColors(self.currentSpdPower)
                 spd_text = c[1]
-                draw.rectangle( self.spd_box,  fill=c[0] )
+                draw.rectangle( spd_box,  fill=c[0] )
         
             if self.currentAtkPower == "SPC":
-                draw.rectangle( self.atk_box,  outline="black",  fill="white" )
+                draw.rectangle( atk_box,  outline="black",  fill="white" )
             elif self.currentAtkPower:
                 c = self.board.PAC.getColors(self.currentAtkPower)
                 atk_text = c[1]
-                draw.rectangle( self.atk_box,  fill=c[0] )
+                draw.rectangle( atk_box,  fill=c[0] )
         
             if self.currentDefPower == "SPC":
-                draw.rectangle( self.def_box,  outline="black",  fill="white" )
+                draw.rectangle( def_box,  outline="black",  fill="white" )
             elif self.currentDefPower:
                 c = self.board.PAC.getColors(self.currentDefPower)
                 def_text = c[1]
-                draw.rectangle( self.def_box,  fill=c[0] )
+                draw.rectangle( def_box,  fill=c[0] )
         
             if self.currentDmgPower == "SPC":
-                draw.rectangle( self.dmg_box,  outline="black",  fill="white" )
+                draw.rectangle( dmg_box,  outline="black",  fill="white" )
             elif self.currentDmgPower:
                 c = self.board.PAC.getColors(self.currentDmgPower)
                 dmg_text = c[1]
-                draw.rectangle( self.dmg_box,  fill=c[0] )
+                draw.rectangle( dmg_box,  fill=c[0] )
         
         offset = 0
         if len(click[0].text) > 1:

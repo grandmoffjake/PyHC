@@ -1,187 +1,7 @@
 from SingleBaseClix import *
 
 class ObjectDialClix(SingleBaseClix):
-    def __init__(self, parent):
-        XML = """
-        	<object id="IG" name="Infinity Gauntlet" type="dial" points="10" loop="true">
-		<rules><![CDATA[<b>Cost</b><br/>Infinity Gauntlet costs 10 points, plus 5 points for each Gem attached to it. At least one Gem must be attached to the gauntlet to activate it. You can't attach more than one of the same type of gem.<br/>
-<b>Assign</b><br/>Infinity Gauntlet is assigned to a character when you reveal your force and only that character can use its effects. When assigned character is KO'd, opponent scores the Infinity Gauntlet.<br/>
-<b>Setup</b><br/>Infinity Gauntlet dial begins on the green line, but does not have a KO click; the dial may rotate past the starting line. You may not add special objects to your force if Infinity Gauntlet is part of it.<br/>
-<b>Turning the Dial</b><br/>At the end of your turn, if assigned character was given a non-free action this turn, choose one: 1) deal assigned character 1 unavoidable damage; or 2) roll a d6 that can't be rerolled and turn the Infinity Gauntlet dial to the right that many times; or 3) if Infinity Gauntlet dial has a special power visible, you may choose to do nothing.<br/>
-<b>Using Effects</b><br/>When a Gem, a standard power or a special power is revealed on the dial, assigned character can use the effects associated with that if they can't already. You may only use the Gem effects if that Gem is attached.<br/>
-<b>THE GAUNTLET COMPLETE</b><br/>If all six Gems are attached, character's powers and combat abilities can't be countered and character can use Willpower.<br/>
-		]]></rules>
-		<specials>
-			<special power="ONE" name="BEYOND MORTAL LIMITS" color="special" shape="circle">At the beginning of your turn, choose an attached gem that you did not choose during your last turn. Character can use the effects of that gem as long as this power is showing.</special>
-			<special power="TWO" name="APOTHEOSIS APPROACHING" color="special" shape="circle">Modify character's combat values by +1. At the beginning of your turn, choose a standard power character can't already use. Character can use that power until your next turn.</special>
-			<special power="THREE" name="ULTIMATE GODHOOD ATTAINED" color="special" shape="circle">Modify character's combat values by +2 and character can use the effects of every attached gem. At the beginning of your turn, choose a standard power character can't already use. Character can use that power until your next turn.</special>
-			<special power="SOULGEM" name="SOUL GEM" color="green" shape="circle">Character can use Steal Energy. When character KO's an opposing character, heal character of 2 damage.</special>
-			<special power="POWERGEM" name="POWER GEM" color="red" shape="circle">If character's printed range value is 4 or less, character can use Close Combat Expert. If character's range value is 5 or more, character can use Ranged Combat Expert.</special>
-			<special power="TIMEGEM" name="TIME GEM" color="orange" shape="circle">Character can use Incapacitate and Super Senses.</special>
-			<special power="SPACEGEM" name="SPACE GEM" color="purple" shape="circle">Character can use Phasing/Teleport and the Carry ability. Modify character's speed value by +2.</special>
-			<special power="REALITYGEM" name="REALITY GEM" color="yellow" shape="circle">Character can use Probability Control, but only during character's turn.</special>
-			<special power="MINDGEM" name="MIND GEM" color="lightblue" shape="circle">Character can use Mind Control and Telekinesis.</special>
-		</specials>
-		<dial length="26">
-			<click num="1">
-				<spd power="SPACEGEM"/>
-				<atk power="TIMEGEM"/>
-				<def power="POWERGEM"/>
-				<dmg power="TK" type="PAC">A</dmg>
-			</click>
-			<click num="2">
-				<spd power="REALITYGEM"/>
-				<atk power="SOULGEM"/>
-				<def power="TIMEGEM"/>
-				<dmg power="LC" type="PAC">S</dmg>
-			</click>
-			<click num="3">
-				<spd power="MINDGEM"/>
-				<atk power="POWERGEM"/>
-				<def power="SPACEGEM"/>
-				<dmg power="MM" type="PAC">D</dmg>
-			</click>
-			<click num="4">
-				<spd power="SOULGEM"/>
-				<atk power="TIMEGEM"/>
-				<def power="REALITYGEM"/>
-				<dmg power="MC" type="PAC">S</dmg>
-			</click>
-			<click num="5">
-				<spd power="POWERGEM"/>
-				<atk power="SOULGEM"/>
-				<def power="MINDGEM"/>
-				<dmg power="CHG" type="PAC">S</dmg>
-			</click>
-			<click num="6">
-				<spd power="MINDGEM"/>
-				<atk power="POWERGEM"/>
-				<def power="SOULGEM"/>
-				<dmg power="SSE" type="PAC">D</dmg>
-			</click>
-			<click num="7">
-				<spd power="SOULGEM"/>
-				<atk power="TIMEGEM"/>
-				<def power="MINDGEM"/>
-				<dmg power="STL" type="PAC">S</dmg>
-			</click>
-			<click num="8">
-				<spd power="POWERGEM"/>
-				<atk power="SPACEGEM"/>
-				<def power="REALITYGEM"/>
-				<dmg power="BCF" type="PAC">A</dmg>
-			</click>
-			<click num="9">
-				<spd power="TIMEGEM"/>
-				<atk power="REALITYGEM"/>
-				<def power="SOULGEM"/>
-				<dmg power="QK" type="PAC">A</dmg>
-			</click>
-			<click num="10">
-				<spd power="SPACEGEM"/>
-				<atk power="MINDGEM"/>
-				<def power="POWERGEM"/>
-				<dmg power="POI" type="PAC">A</dmg>
-			</click>
-			<click num="11">
-				<spd power="REALITYGEM"/>
-				<atk power="SOULGEM"/>
-				<def power="TIMEGEM"/>
-				<dmg power="COM" type="PAC">D</dmg>
-			</click>
-			<click num="12">
-				<spd power="MINDGEM"/>
-				<atk power="POWERGEM"/>
-				<def power="SPACEGEM"/>
-				<dmg power="PB" type="PAC">A</dmg>
-			</click>
-			<click num="13">
-				<spd power="SOULGEM"/>
-				<atk power="TIMEGEM"/>
-				<def power="REALITYGEM"/>
-				<dmg power="FLR" type="PAC">S</dmg>
-			</click>
-			<click num="14">
-				<spd power="POWERGEM"/>
-				<atk power="SPACEGEM"/>
-				<def power="MINDGEM"/>
-				<dmg power="ESD" type="PAC">D</dmg>
-			</click>
-			<click num="15">
-				<spd power="TIMEGEM"/>
-				<atk power="REALITYGEM"/>
-				<def power="ONE">1</def>
-				<dmg power="CCE" type="PAC">G</dmg>
-			</click>
-			<click num="16">
-				<spd power="SPACEGEM"/>
-				<atk power="MINDGEM"/>
-				<def power="ONE">1</def>
-				<dmg power="EW" type="PAC">G</dmg>
-			</click>
-			<click num="17">
-				<spd power="REALITYGEM"/>
-				<atk power="SPACEGEM"/>
-				<def power="ONE">1</def>
-				<dmg power="RCE" type="PAC">G</dmg>
-			</click>
-			<click num="18">
-				<spd power="MINDGEM"/>
-				<atk power="REALITYGEM"/>
-				<def power="ONE">1</def>
-				<dmg power="TOU" type="PAC">D</dmg>
-			</click>
-			<click num="19">
-				<spd power="SOULGEM"/>
-				<atk power="MINDGEM"/>
-				<def power="ONE">1</def>
-				<dmg power="INV" type="PAC">D</dmg>
-			</click>
-			<click num="20">
-				<spd power="POWERGEM"/>
-				<atk power="SOULGEM"/>
-				<def power="ONE">1</def>
-				<dmg power="IMP" type="PAC">D</dmg>
-			</click>
-			<click num="21">
-				<spd power="TIMEGEM"/>
-				<atk power="POWERGEM"/>
-				<def power="SOULGEM"/>
-				<dmg power="TWO">2</dmg>
-			</click>
-			<click num="22">
-				<spd power="SPACEGEM"/>
-				<atk power="TIMEGEM"/>
-				<def power="POWERGEM"/>
-				<dmg power="TWO">2</dmg>
-			</click>
-			<click num="23">
-				<spd power="REALITYGEM"/>
-				<atk power="SPACEGEM"/>
-				<def power="TIMEGEM"/>
-				<dmg power="TWO">2</dmg>
-			</click>
-			<click num="24">
-				<spd power="MINDGEM"/>
-				<atk power="REALITYGEM"/>
-				<def power="SPACEGEM"/>
-				<dmg power="TWO">2</dmg>
-			</click>
-			<click num="25">
-				<spd power="THREE">3</spd>
-				<atk/>
-				<def/>
-				<dmg/>
-			</click>
-			<click num="26">
-				<spd power="THREE">3</spd>
-				<atk/>
-				<def/>
-				<dmg/>
-			</click>
-		</dial>
-	</object>
-    """
+    def __init__(self, parent, XML):
         SingleBaseClix.__init__(self, parent, XML)
         self.dial = self.xmlDial.find("dial")
         self.specials = self.xmlDial.find("specials")
@@ -195,7 +15,7 @@ class ObjectDialClix(SingleBaseClix):
             self.trait_symbol_image = Image.open( os.path.join(sys.path[0], 'images', 'trait-star.gif') ).convert('RGB').convert('P', palette=Image.ADAPTIVE)
         
         self.powers = {}
-        if self.specials:
+        if self.specials is not None:
             for s in self.specials:
                 self.powers[s.get("power")] = s
                 
@@ -244,13 +64,18 @@ class ObjectDialClix(SingleBaseClix):
                 text = "black"
             return (self.powers[power].get("color"), text, self.powers[power].get("shape"))
         
-    def drawValues(self, im, draw, click, font):
-        x = 65
+    def drawValues(self, im, draw, click, font, xOffset):
+        x = 65+xOffset
         y = 68
         dY = 24
         dX = 13
         
         spd_txt = atk_text = def_text = dmg_text = "black"
+        
+        spd_box = [(60+xOffset, 67), (78+xOffset, 85)]
+        atk_box = [(60+xOffset, 90), (78+xOffset, 108)]
+        def_box = [(60+xOffset, 115), (78+xOffset, 133)]
+        dmg_box = [(83+xOffset, 114), (101+xOffset, 132)]
         
         if click:
             self.currentSpdPower = click[0].get("power")
@@ -261,62 +86,62 @@ class ObjectDialClix(SingleBaseClix):
             if click[0].get("type") == "PAC":
                 c = self.board.PAC.getColors(self.currentSpdPower)
                 spd_text = c[1]
-                draw.rectangle( self.spd_box,  fill=c[0] )
+                draw.rectangle( spd_box,  fill=c[0] )
             elif self.currentSpdPower:
                 c = self.getColors(self.currentSpdPower)
                 spd_text = c[1]
                 if c[2] == "circle":
                     if c[0] == "special":
-                        draw.ellipse( self.spd_box,  fill="white",  outline="black" )
+                        draw.ellipse( spd_box,  fill="white",  outline="black" )
                     else:
-                        draw.ellipse( self.spd_box,  fill=c[0])
+                        draw.ellipse( spd_box,  fill=c[0])
                 else:
-                    draw.rectangle( self.spd_box,  fill=c[0] )
+                    draw.rectangle( spd_box,  fill=c[0] )
                     
             if click[1].get("type") == "PAC":
                 c = self.board.PAC.getColors(self.currentAtkPower)
                 atk_text = c[1]
-                draw.rectangle( self.atk_box,  fill=c[0] )
+                draw.rectangle( atk_box,  fill=c[0] )
             elif self.currentAtkPower:
                 c = self.getColors(self.currentAtkPower)
                 atk_text = c[1]
                 if c[2] == "circle":
                     if c[0] == "special":
-                        draw.ellipse( self.atk_box,  fill="white",  outline="black" )
+                        draw.ellipse( atk_box,  fill="white",  outline="black" )
                     else:
-                        draw.ellipse( self.atk_box,  fill=c[0])
+                        draw.ellipse( atk_box,  fill=c[0])
                 else:
-                    draw.rectangle( self.atk_box,  fill=c[0] )
+                    draw.rectangle( atk_box,  fill=c[0] )
                     
             if click[2].get("type") == "PAC":
                 c = self.board.PAC.getColors(self.currentDefPower)
                 def_text = c[1]
-                draw.rectangle( self.def_box,  fill=c[0] )
+                draw.rectangle( def_box,  fill=c[0] )
             elif self.currentDefPower:
                 c = self.getColors(self.currentDefPower)
                 def_text = c[1]
                 if c[2] == "circle":
                     if c[0] == "special":
-                        draw.ellipse( self.def_box,  fill="white",  outline="black" )
+                        draw.ellipse( def_box,  fill="white",  outline="black" )
                     else:
-                        draw.ellipse( self.def_box,  fill=c[0])
+                        draw.ellipse( def_box,  fill=c[0])
                 else:
-                    draw.rectangle( self.def_box,  fill=c[0] )
+                    draw.rectangle( def_box,  fill=c[0] )
                     
             if click[3].get("type") == "PAC":
                 c = self.board.PAC.getColors(self.currentDmgPower)
                 dmg_text = c[1]
-                draw.rectangle( self.dmg_box,  fill=c[0] )
+                draw.rectangle( dmg_box,  fill=c[0] )
             elif self.currentDmgPower:
                 c = self.getColors(self.currentDmgPower)
                 dmg_text = c[1]
                 if c[2] == "circle":
                     if c[0] == "special":
-                        draw.ellipse( self.dmg_box,  fill="white",  outline="black" )
+                        draw.ellipse( dmg_box,  fill="white",  outline="black" )
                     else:
-                        draw.ellipse( self.dmg_box,  fill=c[0])
+                        draw.ellipse( dmg_box,  fill=c[0])
                 else:
-                    draw.rectangle( self.dmg_box,  fill=c[0] )
+                    draw.rectangle( dmg_box,  fill=c[0] )
                                 
         offset = 0
         if click[0].text and len(click[0].text) > 1:
