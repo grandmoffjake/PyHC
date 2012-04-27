@@ -5,7 +5,6 @@
 #TODO: Click to move map functionality
 #TODO: Hotkeys for predefined locations
 #TODO: Hotkeys for terrain tokens/lof/object mode
-#TODO: Map chooser
 #TODO: Refactor dial images to read from XML definition
 #TODO: XML Team abilities
 #TODO: Netcode
@@ -18,6 +17,7 @@
 #TODO: Feats and ATAs
 #TODO: Multi-based figures
 #TODO: Bystander Tokens
+#TODO: Figure Search
 
 """
 Module implementing MainWindow.
@@ -34,6 +34,11 @@ import math
 import random
 from ObjectSimpleSquare import *
 from lxml import etree
+from mapDialog import *
+
+import os
+import sys
+import glob
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     """
@@ -47,7 +52,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.ui = Ui_MainWindow()
         
         self.mousePosition = [0, 0]
-        self.MainWindow = MainWindow
         self.setupUi(self)
         self.show()
 
@@ -67,21 +71,51 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         self.myActiveClix = False
         self.theirActiveClix = False
+        self.chooseMapDialog = None
         
         self.activeObject = False
         
         self.myDial.setMouseTracking(True)
-#        self.myDial.mouseMoveEvent = self.hoverMyDial
+        self.currentFigure.setMouseTracking(True)
+        
+        self.currentSet = None
+        
+        self.sets = {}
+        setlistFile = os.path.join(sys.path[0], 'sets',  'setlist')
+        if os.path.exists(  setlistFile ):
+            sets = open(setlistFile).readlines()
+            for setname in sets:
+                set,  filesize,  setname = setname.split(":")
+                if os.path.getsize( set ) != filesize:
+                    self.generateSetList( setlistFile )
+                    break
+                else:
+                    self.sets[setname] = set
+        else:
+            self.generateSetList( setlistFile )
+                    
+        self.populateSetsDropdown()
+        self.currentSelectedFigure = None
+        self.myDial.mouseMoveEvent = self.hoverMyDial
+        self.currentFigure.mouseMoveEvent = self.hoverCurrentFigure
 
+    def populateSetsDropdown(self):
+        self.cmbSet.addItem( "- Choose a Set -" )
+        for key,  value in self.sets.items():
+            self.cmbSet.addItem( key )
+        return
+
+    def generateSetList(self,  setlistFile):
+        self.sets = {}
+        f = open( setlistFile,  'w' )
+        for infile in glob.glob( os.path.join(sys.path[0], 'sets',  '*.xml' ) ):
+            setXml = etree.parse( infile )
+            setname = setXml.getroot().get("name")
+            line = infile+":"+str(os.path.getsize( infile ))+":"+setname
+            self.sets[setname] = infile
+            f.write( line )
+        f.close()
     
-    @pyqtSignature("")
-    def on_actionChoose_Map_activated(self):
-        """
-        Slot documentation goes here.
-        """
-        # TODO: not implemented yet
-        raise NotImplementedError
-
     @pyqtSignature("")
     def on_cmdBarrier_clicked(self):
         """
@@ -99,28 +133,28 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             
         #print event.key()
         if event.key() == QtCore.Qt.Key_Up and self.board.view_angle_x < 90:
-            self.board.view_angle_x += 1.0
+            self.board.view_angle_x += 5.0
             self.board.updateGL()
         elif event.key() == QtCore.Qt.Key_Down and self.board.view_angle_x > 20:
-            self.board.view_angle_x -= 1.0
+            self.board.view_angle_x -= 5.0
             self.board.updateGL()
         elif event.key() == QtCore.Qt.Key_Left:
-            self.board.view_angle_y += 1.0
+            self.board.view_angle_y += 5.0
             self.board.updateGL()
         elif event.key() == QtCore.Qt.Key_Right:
-            self.board.view_angle_y -= 1.0
+            self.board.view_angle_y -= 5.0
             self.board.updateGL()
         elif event.key() == 87:
-            self.board.y_pos += 1.0
-            self.board.updateGL()
-        elif event.key() == 83:
             self.board.y_pos -= 1.0
             self.board.updateGL()
+        elif event.key() == 83:
+            self.board.y_pos += 1.0
+            self.board.updateGL()
         elif event.key() == 65:
-            self.board.x_pos -= 1.0
+            self.board.x_pos += 1.0
             self.board.updateGL()
         elif event.key() == 68:
-            self.board.x_pos += 1.0
+            self.board.x_pos -= 1.0
             self.board.updateGL()
         elif event.key() == 81:
             self.board.z_pos -= 1.0
@@ -146,7 +180,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if keystate[K_END]:  view_distance = 1.0;  view_angle_y = 0.0;  view_angle_x = 90.0
             '''
         else:
-            return QtGui.QMainWindow.keyPressEvent(self.MainWindow, event)
+            return QtGui.QMainWindow.keyPressEvent(self, event)
     
     @pyqtSignature("")
     def on_cmdLOF_clicked(self):
@@ -275,6 +309,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         y = int(math.ceil(posZ)+11)
         
         return [x, y]
+        
+    def hoverCurrentFigure(self, event):
+        if self.currentSelectedFigure is not None:
+            print event.pos()
+            return
         
     def hoverMyDial(self, event):
         if self.myActiveClix:
@@ -459,7 +498,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if new_distance >= 0 and new_distance <= 40:
                 self.board.z_pos = new_distance
                 self.board.updateGL()
-        return QtGui.QMainWindow.wheelEvent(self.MainWindow, event)
+        return QtGui.QMainWindow.wheelEvent(self, event)
         
     def clearOtherToggles(self, button):
         if button != self.cmdBarrier:
@@ -493,6 +532,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def on_actionBattle_Map_activated(self):
         self.wStack.setCurrentIndex(1)
         self.mode = "map"
+        
+    @pyqtSignature("")
+    def on_actionChoose_Map_activated(self):
+        if self.chooseMapDialog is None:
+            self.chooseMapDialog = dlgChooseMap(self)
+            self.chooseMapDialog.setMap( self.board.currentMap )
+            
+        self.chooseMapDialog.show()
+
+
     
     @pyqtSignature("")
     def on_txtSearch_returnPressed(self):
@@ -516,6 +565,70 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     return
         
         
+    @pyqtSignature("QString")
+    def on_cmbSet_currentIndexChanged(self, p0):
+        print p0
+        chosenSet = str(p0)
+        if chosenSet == "- Choose a Set -":
+            return False
+        if self.currentSet and chosenSet == self.currentSet.getroot().get("name"):
+            return False
+            
+        self.currentSet = setXml = etree.parse( self.sets[chosenSet] )
+        figures = setXml.find("figures")
+        for figure in figures:
+            self.lstFigures.addItem( figure.get("id") + " " + figure.get("name") )
+    
+    @pyqtSignature("QString")
+    def on_lstFigures_currentTextChanged(self, currentText):
+        ex = str(currentText).split(" ")
+        id = ex[0]
+        figures = self.currentSet.xpath("//figure[@id='"+id+"']")
+        if len(figures):
+            figure = figures[0]
+            self.currentSelectedFigure = figure
+            dial = figure.find("dial")
+            if dial:
+                dialLength = int(dial.get("length"))
+                if dialLength < 11:
+                    dialLength = 11
+                    
+                ko_click = "<td width='20'><table border='1' style='border-style: solid;border-color: white' cellspacing='0' cellpadding='0'><tr><td width='20' align='center' style='color:red'>KO</td></tr></table></td>"
+                spd_clicks = dial.xpath("click/spd")
+                atk_clicks = dial.xpath("click/atk")
+                def_clicks = dial.xpath("click/def")
+                dmg_clicks = dial.xpath("click/dmg")
+                text = "<p><b>"+figure.get("name")+"</b></p>"
+                text += "<table bgcolor='white' border='0'>"
+#                text += "<tr><td bgcolor='red'>Doom</td></tr>"
+                text += "<tr>"
+                text += "<td width='20'><table border='1' bgcolor='black' style='border-style: solid;border-color: black' cellspacing='0' cellpadding='0'><tr><td width='20' align='center'><img src='images/units-m-normal.gif'></td></tr></table></td>"
+                for i in range(0, dialLength):
+                    i = int(i)
+                    if len(spd_clicks)<=i:
+                        text += ko_click
+                    else:
+                        p = spd_clicks[i].get("power")
+                        value = spd_clicks[i].text
+                        border_color = "white"
+                        bg_color = 'white'
+                        fg_color = 'black'
+                        
+                        if p:
+                            if p == "SPC":
+                                bg_color = "white"
+                                border_color = "black"
+                                fg_color = 'black'
+                            else:
+                                c = self.board.PAC.getColors(spd_clicks[i].get("power"))
+                                bg_color = c[0]
+                                fg_color = "color:"+c[1]
+                            
+                        text += "<td width='20'><table border='1' style='border-style: solid;border-color: "+border_color+"' cellspacing='0' cellpadding='0'><tr><td width='20' align='center' bgcolor='"+bg_color+"' style='"+fg_color+"'>"+value+"</td></tr></table></td>"
+                text += "</tr>"
+                text += "</table>"
+                self.currentFigure.setText( text )
+
 if __name__ == '__main__':
     import sys
     app = QtGui.QApplication(sys.argv)

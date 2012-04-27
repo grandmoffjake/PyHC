@@ -162,6 +162,8 @@ class GameBoard(QGLWidget):
             f.y = y+yOffset
             self.objects.append( f )
             self.boardObjects[f.x][f.y] = f
+            
+        self.currentMap = 'Small_Town.jpg'
         
         
         return
@@ -192,6 +194,25 @@ class GameBoard(QGLWidget):
         self.boardFigures[q.x][q.y] = q
         self.boardObjects[o.x][o.y] = o
         self.boardObjects[o2.x][o2.y] = o2
+        self.currentMap = 'Small_Town.jpg'
+        
+        
+    def prepareMap(self,  map = None):
+        if map is not None:
+            self.currentMap = map
+            
+        im = Image.open(os.path.join(sys.path[0], 'maps', self.currentMap))
+        MapData = im.convert("RGBA").tostring("raw", "RGBA")
+                
+        glEnable(GL_TEXTURE_2D)
+        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
+
+        glBindTexture(GL_TEXTURE_2D, self.Textures[0])
+        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, im.size[0], im.size[1], 0, GL_RGBA, GL_UNSIGNED_BYTE, MapData )
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+        glDisable(GL_TEXTURE_2D)
+        
         
 
     def paintGL(self):
@@ -211,21 +232,11 @@ class GameBoard(QGLWidget):
                 f.regenerateTexture()
                 i += 1
             
-            GridFile = '/Users/thejake/Documents/HCOL/maps/Small_Town.jpg'
-            im = Image.open(GridFile)
-            gx = im.size[0]
-            gy = im.size[1]
-            GridData = im.convert("RGBA").tostring("raw", "RGBA")
+            self.prepareMap()
             
             glEnable(GL_TEXTURE_2D)
             glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
-            
-            glBindTexture(GL_TEXTURE_2D, self.Textures[0]) #Board (Red Section)
-            glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, gx, gy, 0,
-                          GL_RGBA, GL_UNSIGNED_BYTE, GridData )
-            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-            
+
             im = Image.open(os.path.join(sys.path[0], 'assets', 'barrier.png'))
             BarrierData = im.convert("RGBA").tostring("raw", "RGBA")
             glBindTexture(GL_TEXTURE_2D, self.Tiles[0])

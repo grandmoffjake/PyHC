@@ -222,15 +222,20 @@ class FigureClix(Clix):
         glRotatef(-self.board.view_angle_y, 0.0, 1.0, 0.0)
         glColor(1, 1, 1)
         if self.texture:
-            glEnable(GL_TEXTURE_2D)
+            #glPushMatrix()
+            glEnable(GL_TEXTURE_2D)#,  GL_BLEND)
             glBindTexture(GL_TEXTURE_2D, self.texture)
+            #glBlendFunc( GL_SRC_ALPHA , GL_ONE_MINUS_SRC_ALPHA )
+            #glColor4f(1, 1, 1, .5)
+
             glBegin(GL_QUADS)
             glTexCoord2f(0.0, 1.0); glVertex3f(-r, 0, 0.0)
             glTexCoord2f(1.0, 1.0); glVertex3f(r, 0, 0.0)
             glTexCoord2f(1.0, 0.0); glVertex3f(r, t, 0.0)
             glTexCoord2f(0.0, 0.0); glVertex3f(-r, t, 0.0)
             glEnd()
-            glDisable(GL_TEXTURE_2D)
+            glDisable(GL_TEXTURE_2D)#,  GL_BLEND)
+            #glPopMatrix()
         else:
             glRectf( -r,  0,  r,  t )
         

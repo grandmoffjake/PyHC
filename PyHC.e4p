@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Project SYSTEM "Project-4.6.dtd">
 <!-- eric4 project file for project PyHC -->
-<!-- Saved: 2012-03-08, 21:00:44 -->
+<!-- Saved: 2012-03-23, 11:40:39 -->
 <!-- Copyright (C) 2012 ,  -->
 <Project version="4.6">
   <Language>en</Language>
@@ -22,9 +22,14 @@
     <Source>FigureClix.py</Source>
     <Source>ObjectDialClix.py</Source>
     <Source>ObjectSimpleClix.py</Source>
+    <Source>ObjectSimpleSquare.py</Source>
+    <Source>mainForm.py</Source>
+    <Source>Ui_mapDialog.py</Source>
+    <Source>mapDialog.py</Source>
   </Sources>
   <Forms>
     <Form>mainForm.ui</Form>
+    <Form>mapDialog.ui</Form>
   </Forms>
   <Translations>
   </Translations>
@@ -33,7 +38,6 @@
   <Interfaces>
   </Interfaces>
   <Others>
-    <Other>ObjectDialClix.asp</Other>
   </Others>
   <Vcs>
     <VcsType>None</VcsType>

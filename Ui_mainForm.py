@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/Users/thejake/Documents/python/PyHC/mainForm.ui'
 #
-# Created: Mon Mar 19 22:08:53 2012
+# Created: Wed Mar 21 23:54:44 2012
 #      by: PyQt4 UI code generator 4.9
 #
 # WARNING! All changes made in this file will be lost!
@@ -64,6 +64,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_5 = QtGui.QVBoxLayout(self.frame)
         self.verticalLayout_5.setObjectName(_fromUtf8("verticalLayout_5"))
         self.currentFigure = QtGui.QLabel(self.frame)
+        self.currentFigure.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.currentFigure.setObjectName(_fromUtf8("currentFigure"))
         self.verticalLayout_5.addWidget(self.currentFigure)
         self.widget_12 = QtGui.QWidget(self.frame)
